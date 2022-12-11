@@ -1,10 +1,24 @@
 #contacted by US CDC to evaluate EID outbreak
 
+#Goal 1: import data
+  #Country X can be imported readily using .csv and a for loop
+  #Country Y needs to have space-delimited .txt file converted to .csv file
+      #For orthogonality purposes, might want to generate a function to do this where:
+          #delimiter is one of the inputs ("\t", " ")
+
+#Goal 2: summarize individual country data
+  #To determine if patient is positive: sum markers 1-10
+    #if sum >=1; patient is infected
+  #Determine earliest date in which individuals are infected in each country
+
 #csv Data (countryX) looks like: gender, age, Markers 1-10, comma-separated
-#txt Data (countryY) looks like: gender, age, Markers 1-10, tab-delimited
+#txt Data (countryY) looks like: gender, age, Markers 1-10, space-delimited >> need to convert to csv
 
 
 y120 = read.table("/Users/chris_turlo/Desktop/RProject/RProject2022/CountryY/screen_120.txt", header=TRUE, sep=" ", stringsAsFactors=FALSE)
+for(file in '/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryY'){
+  
+}
 
 #NOTE FROM STUART: zip file has a git repo within it; go in terminal and delete the directory with Rproject2022, delete
 
@@ -54,3 +68,31 @@ for (i in daterange){
 #to work with all data:
 provided_alldata<-read.csv("/Users/chris_turlo/Desktop/RProject/RProject2022/allData.csv", header=TRUE, sep=',')
   
+
+##From rubric: (6 points)
+#Converts .txt to .csv, and changes file extension
+#Compiles the files
+#Generate a summary graph
+
+##Question 1 (answer question with reasonable rationale, graphical support) (4 points)
+##Question 2 (answers question with reasonable rationale, graphical support) (4 points)
+#uses all support functions created (2 points)
+#well commented and efficient (4 points)
+
+#files requested:
+  #supportingFunctions.R > contain the assorted scripts to process data
+    #convert all files to .csv
+    #compile data, including country and dayofYear columns
+    #user can choose to remove NAs in any columns, include but be warned of presence, or include and do not warn
+    #write summary file: allData.csv
+        #Number of screens run
+        #Percent of patients screened that were infected
+        #Male v. Female
+        #Age Distribution
+
+  #analysis.R > use source() to utilize the functions within supportingFunctions.R
+    #compile data into a single .csv
+    #process the data
+    #provide graphical insight
+    #have commented answers to these questions
+
