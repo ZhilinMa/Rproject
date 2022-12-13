@@ -71,7 +71,7 @@ compile <- function(dir, toWarn){
 summarize <- function(file) {
   # number of screens run
   print(paste("The numbers of screens run:", nrow(file)))
-
+  df <- data.frame(matrix(data = NA, ncol=14, nrow=0))
   # percent of patients screened that were infected
   num_infected = 0
   num_males = 0
@@ -83,6 +83,7 @@ summarize <- function(file) {
     # check if any of the markers did not equal 0
     if(sum(file[i, 3:12]) > 0) {
       num_infected = num_infected + 1
+      df <- rbind(df, file[i,])
     }
     if(file[i, 1] == "male"){
       num_males = num_males + 1
@@ -106,7 +107,7 @@ summarize <- function(file) {
  
   # age distribution of patients
   print(paste("The age distribution of the patients was", min_age, "to", max_age)) # not sure why 423 is one of the ages?
-  
+  return(df)
 }
 
 

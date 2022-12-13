@@ -38,11 +38,14 @@ write.csv(combined, "all.csv", row.names = FALSE)
 
 ###### FUNCTION SUMMARIZE CALL ##########
 file <- read.csv("allData.csv")   # provided data, we can test with our file too 
-summarize(file)
+infected <- summarize(file) # this function takes a minute or two to run 
+write.csv(infected, "infected.csv", row.names = FALSE)
 
+###### Question 1 ##########
+infected_patients <- read.csv("infected.csv")
+ggplot(infected_patients, aes(x=dayofYear, fill=country)) + geom_bar(position="dodge")
+# The outbreak most likely started in countryX since the first infection occurred in countryX.
+# Further, there were way more cases in countryX, especially within the first 20 days of the outbreak
 
-####### THINGS TO DO #########
-# 1. do we have to check if they put like an invalid number in
-# 2. i don't know how to check if 2 works, if it is actually catching those NAs
-# 3. answer questions from beginning of PDF
+####### Question 2 #########
 
