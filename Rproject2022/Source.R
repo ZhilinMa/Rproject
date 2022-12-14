@@ -41,118 +41,83 @@ TXTConverter<-function(dir, separator){
 TXTConverter("/Users/chris_turlo/Desktop/Rproject/Rproject2022/CountryX", ',')
 CSVConverter("/Users/chris_turlo/Desktop/Rproject/Rproject2022/CountryX", ' ')
 
-##SimpleCompile
-#This Function works to take multiple .csv files within a directory and adjoin them
-#It outputs a csv file within that directory called "alldata.csv"
+##MORE ELEGANT COMPILE FUNCTION
+#This function takes a directory, and a Country (in quotes) and outputs a compiled file of all .csv files within the directory
+#This function adds a column to the file called "country" specifying where it comes from.
 
-SimpleCompile <- function(dir){
+Compile <- function(dir, Country){
   setwd(dir)
-  filelist<-list.files(path = dir, pattern = ".csv")
-  for(i in 1:length(filelist)){
-    if(i==1){
-      alldata<-read.csv(filelist[i], header=TRUE)
-    }else{
-      alldata<-rbind(alldata, read.csv(filelist[i], header=TRUE, sep=','))
-    }
-  }
-  write.csv(alldata, file='alldata.csv')
-}
-
-##These steps can be commented out following successful build of code, and add in a country column in a not graceful way
-SimpleCompile("/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryX")
-allX<-read.csv("/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryX/alldata.csv", header=TRUE, sep=',')
-SimpleCompile("/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryY")
-allY<-read.csv("/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryY/alldata.csv", header=TRUE, sep=',')
-
-for (i in allX){
-  allX$country[i]<- "X"
-}
-
-for (i in allY){
-  allY$country[i]<- "Y"
-}
-
-write.csv(allX, "/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryX/alldata.csv")
-write.csv(allY, "/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryY/alldata.csv")
-
-#this does not work, but this is the direction we need to go in. My guess is we have to fix indexing/looping
-alldata<-rbind(allX,allY)
-write.csv(alldata, "/Users/chris_turlo/Desktop/Rproject/Rproject2022/alldata.csv")
-###
-
-### BELOW IS WORKSPACE ###
-
-#As of right now, country X and country Y have been transformed to csvs
-#These csvs are now compiled and contain gender, age, markers 1-10, and country data
-
-#NEED dayofYear column; may reassess introduction of country column within larger compile strategy
-
-
-
-#readline in "do you want to remove NAs"
-
-
-#Compile Function
-Compile <- function(dir,Country,dayStart,dayEnd){
-  setwd(dir)
-  filelist <-list.files(path = dir, pattern = ".csv")
-  dayofyear <-list(c(as.integer(dayStart):as.integer(dayEnd)))
-  if (length(filelist)!=length(dayofyear)){
-    readline(prompt = "ERROR: Unable to assign dates to files")
-  }else{
-    for (i in 1:length(dayofyear)){
-      for(j in 1:length(filelist)){
-        filelist[j]$Day.of.Year<-dayofyear[i]
-      }
-    }
-  }
-  #ask the user if they want to remove incomplete data
+  filelist<-list.files(path=dir, pattern=".csv")
+  #Prompts to remove incomplete data from the set (for if working with datasets with incomplete testing information)
   manual_input_1 <- readline(prompt = "Would you like to remove incomplete data? (Y/N)")
-  #if yes, then remove incomplete data
+  #if yes, then compile data, and then remove incomplete data (NA)
   if (manual_input_1 == "Y"){
     for (i in 1:length(filelist)){
-      if (i==1){
-        alldata<-read.csv(filelist[i], header=TRUE)}
-      else if (i>1) {
-        alldata<-rbind(alldata,read.table(filelist[i], header=TRUE, sep=','))
+      if(i==1){
+        alldata<-read.csv(filelist[i], header=TRUE)
+      }else if (i>1){
+        alldata<-rbind(alldata, read.table(filelist[i], header=TRUE, sep=','))
       }
     }
     are_there_na<-any(is.na(alldata))
     if (are_there_na==TRUE){
       alldata<-alldata[complete.cases(alldata),]
       readline(prompt="Incomplete data has been removed successfully.")
-      }else{
-        readline(prompt = "No incomplete data detected.")}
-  alldata$country<-c('Country')
-  write.csv(alldata, file=alldata.csv)
+    }else{
+      readline(prompt="No incomplete data detected")
+    }
+    alldata$country<-c(Country)
+    write.csv(alldata, file='allDATA.csv')
   }else{
-    break}
-  }
-}
-#########
-    
-    manual_input_2<-readline(prompt ="Do you wish to be warned of missing data? (Y/N)")
-    if (manual_input_2== "Y"){
+    #this else statement is if you choose not to remove NA data
+    #the following readline sets up the ask of whether or not you want to be warned that data is incomplete
+    manual_input_2<-readline(prompt = "Do you wish to be warned of missing data? (Y/N)")
+    if (manual_input_2 == "Y"){
+      for (i in 1:length(filelist)){
+        if(i==1){
+          alldata<-read.csv(filelist[i], header=TRUE)
+        }else if (i>1){
+          alldata<-rbind(alldata,read.table(filelist[i], header=TRUE, sep=','))
+        }
+      }
       are_there_na<-any(is.na(alldata))
       if(are_there_na==TRUE){
-        readline(prompt = "WARNING: Incomplete data has been detected, but not removed.")
+        readline(prompt="WARNING: Incomplete data has been detected, but not removed.")
       }else{
-        readline(prompt = "No incomplete data detected.")
+        readline(prompt="No incomplete data has been detected.")
       }
-      alldata$country<-c('Country')
-      write.csv(alldata,file="alldata.csv")
-    }else{
-      alldata$country<-c('Country')
-      write.csv(alldata,file="alldata.csv")
+      alldata$country<-c(Country)
+      write.csv(alldata,file="allDATA.csv")
+    }else if (manual_input_2=="N"){
+      #If you say no to both questions, the following produces a compiled file with NA values present
+      for (i in 1:length(filelist)){
+        if(i==1){
+          alldata<-read.csv(filelist[i], header=TRUE)
+        }else if (i>1){
+          alldata<-rbind(alldata,read.table(filelist[i], header=TRUE, sep=','))
         }
-  } 
-      
+      }
+      alldata$country<-c(Country)
+      write.csv(alldata,file="allDATA.csv")
     }
+  }
+}
 
-    
-Compile("/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryX")
-Compile("/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryY")
+Compile("/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryX", "X")
+Compile("/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryY", "Y")
 
+alldataX<-read.csv("/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryX/allDATA.csv")
+alldataY<-read.csv("/Users/chris_turlo/Desktop/RProject/Rproject2022/countryY/allDATA.csv")
+alldata<-rbind(alldataX,alldataY)
+write.csv(alldata, "/Users/chris_turlo/Desktop/Rproject/Rproject2022/ALLDATA.csv")
+
+
+### BELOW IS WORKSPACE ###
+
+#As of right now, country X and country Y have been transformed to csvs
+#These csvs are now compiled and contain gender, age, markers 1-10, and country data
+
+#NEED dayofYear column
 
 
 #Goal 2: summarize individual country data
@@ -160,26 +125,14 @@ Compile("/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryY")
     #if sum >=1; patient is infected
   #Determine earliest date in which individuals are infected in each country
 
-y120 = read.table("/Users/chris_turlo/Desktop/RProject/RProject2022/CountryY/screen_120.txt", header=TRUE, sep=" ", stringsAsFactors=FALSE)
-
-
-#NOTE FROM STUART: zip file has a git repo within it; go in terminal and delete the directory with Rproject2022, delete
-
 #Which country (X/Y) did the disease outbreak likely begin
   #Determine which country has a case earlier than the other (can determine from compiled file)
-
 
 #If country Y develops a vaccine for the disease, is it likely to work for Country X
   #compare microsatellite values across individual countries, look at Y, compare to X
 
-
-#microsatellite analysis (10 markers)
+#microsatellite analysis (10 markers) - airborne bacteria
   #if 1+ markers present, patient was infected
-
-
-#airborne bacteria
-
-
 #each country is screening a large number of patients with symptoms
   #screening_NNN.txt > day, gender, microsatellite markers
 
@@ -191,15 +144,7 @@ y120 = read.table("/Users/chris_turlo/Desktop/RProject/RProject2022/CountryY/scr
 
 
 
-#what we need to do here, open .csv > store data; try for csv
-
-#need to add which date and which country columns to each file
-
-
-
-
-
-#sum(x$age%in%(10:20)) >> i assume this goes somewhere down the line
+#sum(x$age%in%(10:20)) >> i assume this goes somewhere down the line in analysis
 
 #to work with all data:
 provided_alldata<-read.csv("/Users/chris_turlo/Desktop/RProject/RProject2022/allData.csv", header=TRUE, sep=',')
@@ -207,7 +152,7 @@ provided_alldata<-read.csv("/Users/chris_turlo/Desktop/RProject/RProject2022/all
 
 ##From rubric: (6 points)
 #Converts .txt to .csv, and changes file extension - done
-#Compiles the files - idea managed, but execution incomplete; need 
+#Compiles the files - idea cleaner, need dayofYear column, but otherwise done
 #Generate a summary graph
 
 ##Question 1 (answer question with reasonable rationale, graphical support) (4 points)
@@ -231,6 +176,3 @@ provided_alldata<-read.csv("/Users/chris_turlo/Desktop/RProject/RProject2022/all
     #process the data
     #provide graphical insight
     #have commented answers to these questions
-
-
-#WARNING - function that outputs warning messages
