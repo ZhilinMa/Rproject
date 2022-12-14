@@ -1,8 +1,3 @@
-#my notes on setting up the system as required (unzipping file, etc) are 
-#given in notes_log.txt.  Then in R I did:
-#setwd("~/Desktop/biocomputing/git_exercises/Rproject/Rproject2022")
-
-
 #Write a function that converts all files in a directory with space- or 
 #tab-delimited data (.txt) into comma-separated value files
 #I want this to be able to accept another country directory if one is 
