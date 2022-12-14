@@ -111,6 +111,35 @@ summarize <- function(file) {
 }
 
 
+get_markers <- function(file ) {
+  x_markers <- c(0,0,0,0,0,0,0,0,0,0)  # initalize all marker sums to 0
+  y_markers <- c(0,0,0,0,0,0,0,0,0,0)
+  
+  marker_range <- 3:12
+  
+  for (i in 1:nrow(file)) {
+    for(m in marker_range) {
+      if (file[i,m] == 1) {
+        if (file[i,13] == "X") {
+          x_markers[m-2] = x_markers[m-2] + 1
+        }
+        else {
+          y_markers[m-2] = y_markers[m-2] + 1
+        }
+      }
+    }
+  }
+  
+  #print(x_markers)
+  #print(y_markers)
+  
+  marker_summary <- data.frame(x_markers, y_markers)
+  
+  return(marker_summary)
+
+}
+
+
 
 
 

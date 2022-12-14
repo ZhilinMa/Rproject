@@ -43,9 +43,31 @@ write.csv(infected, "infected.csv", row.names = FALSE)
 
 ###### Question 1 ##########
 infected_patients <- read.csv("infected.csv")
-ggplot(infected_patients, aes(x=dayofYear, fill=country)) + geom_bar(position="dodge")
+ggplot(infected_patients, aes(x=dayofYear, fill=country)) + geom_bar(position="dodge") +
+  labs(title="Plot of Infected Patients Screned Each Day", x ="Day of Year", y = "Number of Infected Patients")
+
 # The outbreak most likely started in countryX since the first infection occurred in countryX.
 # Further, there were way more cases in countryX, especially within the first 20 days of the outbreak
 
+
 ####### Question 2 #########
+marker_summary <- get_markers(infected)   # takes a few seconds to run
+
+markers <- 1:10
+
+x_data <- ggplot(data=marker_summary, aes(x=markers)) + 
+  geom_bar(position="dodge", aes(y=x_markers),stat="identity", fill="blue") +
+  labs(title="Markers Detected in Country X", x = "Marker #", y= "Instances Detected")
+   
+y_data <- ggplot(data=marker_summary, aes(x=markers)) + 
+  geom_bar(position="dodge",aes(y=y_markers),stat="identity", fill="red") +
+  labs(title="Markers Detected in Country Y", x = "Marker #", y= "Instances Detected")
+
+# plot the markers next to each other
+plot_grid(x_data, y_data)
+
+# From the graphs, it is clear that country x's infected patients mostly had markers between 1 and 5
+# In contrast, country Y's infected patients had a higehr rate of markers between 5 and 10
+# Due to this, if country Y develops a vaccine, it most likely will not work for citizens in country X
+# because the vaccine would be based on the markers shown in country Y's patients. 
 
