@@ -124,15 +124,6 @@ Compile <- function(dir, Country){
   }
 }
 
-Compile("/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryX", "X")
-Compile("/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryY", "Y")
-
-alldataX<-read.csv("/Users/chris_turlo/Desktop/Rproject/Rproject2022/countryX/allDATA.csv")
-alldataY<-read.csv("/Users/chris_turlo/Desktop/RProject/Rproject2022/countryY/allDATA.csv")
-alldata<-rbind(alldataX,alldataY)
-write.csv(alldata, "/Users/chris_turlo/Desktop/Rproject/Rproject2022/ALLDATA.csv")
-
-
 ##Designed by JV, Imported and edited by CVT
 summarizedData<-function(file){
   alldata<-read.csv(file, header=TRUE, sep=",")
@@ -143,28 +134,22 @@ summarizedData<-function(file){
   
   # Adding "positive" column that assigned number1 to 
   # each patient that had a non-zero amount of markers observed.
-  for(i in 1:nrow(alldata)){
-    if(alldata$infected[i]>0){
-      alldata$positives[i]=1
-    }else{
-      alldata$positives[i]=0
-    }
-  }
+  #graph case load per each country
 
-  
+  alldata$positive[alldata$infected>0]<-1
   library(ggplot2)
-  
-  
+  DailyCaseLoad<-ggplot(data=alldata, aes(
+    x=dayofYear, y=positive, color=as.factor(country)))+
+    geom_col()+
+    theme_bw()+ggtitle("Country Caseload Over Time") + 
+    xlab("Day of Year") + ylab("Number of Positive Patients")
+    
   ### SCREENS RUN ###
   
   screensrun <- nrow(alldata)
   
   
-  ### INFECTED SCREENS ###
-  
-  #Graph showing new positive cases versus the day of year recorded.
-  (newcasesovertimeXY <-ggplot(data = alldata, aes(x=dayofYear,y=infected,color=as.factor(country)))+
-      geom_col()+theme_classic())
+  ### INFECTED SCREENS: Looking at individual biomarkers ###
   
   # Marker Screens for Country X
   marker01X<-sum(alldata[ alldata$country == "X" , 3 ] )
@@ -206,9 +191,8 @@ summarizedData<-function(file){
       xlab("Marker Number") + ylab("Positive Screen") + scale_x_continuous(name="Marker Number", breaks = 1:10))
   
   # Percentage of Screens that were Infected
-  npositives <- as.integer(nrow(alldata[alldata$positives==1,]))
-  percentinfected <- as.integer(npositives %/% nrow(alldata) %*% 100)
-  print(npositives, percentinfected)
+  onlypositives <- nrow(alldata$positives==1)
+  percentinfected <- onlypositives/screensrun
   
   
   ### AGE ###
@@ -229,26 +213,7 @@ summarizedData<-function(file){
   
   print(markersbycountryXY)
   print(agedistribution)
+  print(DailyCaseLoad)
   return(c("Total Screens Run:", screensrun, "Percentage Infected:", percentinfected, "Number of Female Patients:",
            nfemales, "Number of Male Patients:", nmales))
 }
-
-
-
-### BELOW IS WORKSPACE ###
-
-#NEED dayofYear column
-
-
-#Goal 2: summarize individual country data
-  #Determine earliest date in which individuals are infected in each country
-  #Determine which country has a case earlier than the other (can determine from compiled file)
-
-
-
-#write function to summarize compiled data; #screens run, %patients infected, male v. female stats, age distribution)
-#sum(x$age%in%(10:20)) >> i assume this goes somewhere down the line in analysis
-
-##Port into files from JV's Code
-        #Percent of patients screened that were infected
-

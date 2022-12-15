@@ -24,10 +24,10 @@ write.csv(alldata, "/Users/chris_turlo/Desktop/Rproject/Rproject2022/ALLDATA.csv
 #Generate summary data off of SJ's summary file
 summarizedData("/Users/chris_turlo/Desktop/RProject/Rproject2022/SJallData.csv")
 
-#Which country (X/Y) did the disease outbreak likely begin?
-#ANSWER
-#.....
+#Q1: Which country (X/Y) did the disease outbreak likely begin?
 
+#CountryX is likely the origin as caseloads proceed approximately 20 days prior to country Y's
+#This is demonstrated in the graph titled "Country Caseload Over Time"
 
 #Q2: If country Y develops a vaccine for the disease, is it likely to work for Country X:
 
