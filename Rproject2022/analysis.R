@@ -21,14 +21,16 @@ write.csv(alldata, "/Users/chris_turlo/Desktop/Rproject/Rproject2022/ALLDATA.csv
 
 ###Due to issues with indexing and additional clunkiness with our compiled file, data analysis was performed on the given allData.csv file
 
+#Generate summary data off of SJ's summary file
+summarizedData("/Users/chris_turlo/Desktop/RProject/Rproject2022/SJallData.csv")
+
 #Which country (X/Y) did the disease outbreak likely begin?
 #ANSWER
 #.....
 
 
-#If country Y develops a vaccine for the disease, is it likely to work for Country X:
+#Q2: If country Y develops a vaccine for the disease, is it likely to work for Country X:
 
-#ANSWER
 #No - The microsatellite data for the samples from Country X and Country Y show distinct patterns:
 #When a person from Country X is infected: Biomarkers 1-5 are present
 #When a person from Country Y is infected: Biomarkers 6-10 are present

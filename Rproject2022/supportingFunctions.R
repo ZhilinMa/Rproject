@@ -43,6 +43,7 @@ CSVConverter("/Users/chris_turlo/Desktop/Rproject/Rproject2022/CountryX", ' ')
 
 
 ##ADD dayofYear column
+#Here are some attempts to add the dayofYear column to the 
 
 DayofYear<-function(dir){
   setwd(dir)
@@ -132,19 +133,115 @@ alldata<-rbind(alldataX,alldataY)
 write.csv(alldata, "/Users/chris_turlo/Desktop/Rproject/Rproject2022/ALLDATA.csv")
 
 
-### BELOW IS WORKSPACE ###
+##Designed by JV, Imported and edited by CVT
+summarizedData<-function(file){
+  alldata<-read.csv(file, header=TRUE, sep=",")
+  # Adding "infected" column that contains counts of the total markers for each patient.
+  alldata$infected<-alldata$marker01+alldata$marker02+alldata$marker03+alldata$marker04+
+    alldata$marker05+alldata$marker06+alldata$marker07+alldata$marker08+alldata$marker09+
+    alldata$marker10
+  
+  # Adding "positive" column that assigned number1 to 
+  # each patient that had a non-zero amount of markers observed.
+  for(i in 1:nrow(alldata)){
+    if(alldata$infected[i]>0){
+      alldata$positives[i]=1
+    }else{
+      alldata$positives[i]=0
+    }
+  }
 
-#As of right now, country X and country Y have been transformed to csvs
-#These csvs are now compiled and contain gender, age, markers 1-10, and country data
+  
+  library(ggplot2)
+  
+  
+  ### SCREENS RUN ###
+  
+  screensrun <- nrow(alldata)
+  
+  
+  ### INFECTED SCREENS ###
+  
+  #Graph showing new positive cases versus the day of year recorded.
+  (newcasesovertimeXY <-ggplot(data = alldata, aes(x=dayofYear,y=infected,color=as.factor(country)))+
+      geom_col()+theme_classic())
+  
+  # Marker Screens for Country X
+  marker01X<-sum(alldata[ alldata$country == "X" , 3 ] )
+  marker02X<-sum(alldata[ alldata$country == "X" , 4 ] )
+  marker03X <-sum(alldata[ alldata$country == "X" , 5 ] )
+  marker04X <-sum(alldata[ alldata$country == "X" , 6 ] )
+  marker05X <-sum(alldata[ alldata$country == "X" , 7 ] )
+  marker06X <-sum(alldata[ alldata$country == "X" , 8 ] )
+  marker07X <-sum(alldata[ alldata$country == "X" , 9 ] )
+  marker08X <-sum(alldata[ alldata$country == "X" , 10 ] )
+  marker09X <-sum(alldata[ alldata$country == "X" , 11 ] )
+  marker10X <-sum(alldata[ alldata$country == "X" , 12 ] )
+  
+  # Marker Screens for Country Y
+  marker01Y<-sum(alldata[ alldata$country == "Y" , 3 ] )
+  marker02Y<-sum(alldata[ alldata$country == "Y" , 4 ] )
+  marker03Y <-sum(alldata[ alldata$country == "Y" , 5 ] )
+  marker04Y <-sum(alldata[ alldata$country == "Y" , 6 ] )
+  marker05Y <-sum(alldata[ alldata$country == "Y" , 7 ] )
+  marker06Y <-sum(alldata[ alldata$country == "Y" , 8 ] )
+  marker07Y <-sum(alldata[ alldata$country == "Y" , 9 ] )
+  marker08Y <-sum(alldata[ alldata$country == "Y" , 10 ] )
+  marker09Y <-sum(alldata[ alldata$country == "Y" , 11 ] )
+  marker10Y <-sum(alldata[ alldata$country == "Y" , 12 ] )
+  
+  # Data table for Number of Positive Screens by Marker in Countries X and Y
+  markersXY<-data.frame(marker=1:10,X=c(marker01X,marker02X,marker03X,marker04X,marker05X,
+                                        marker06X,marker07X,marker08X,marker09X,marker10X),Y=c(marker01Y,marker02Y,marker03Y,
+                                                                                               marker04Y,marker05Y,marker06Y,marker07Y,marker08Y,marker09Y,marker10Y))
+  
+  dfmarkersXY <- data.frame(marker=c(markersXY$marker),
+                            frequencyXY=c(markersXY$X,markersXY$Y),
+                            country=c("X","X","X","X","X","X","X","X","X","X",
+                                      "Y","Y","Y","Y","Y","Y","Y","Y","Y","Y"))
+  
+  # Bar chart for Number of Positive Screens by Marker in Countries X and Y
+  (markersbycountryXY <-ggplot(dfmarkersXY, aes(x=marker,y=frequencyXY, fill=country))+
+      geom_bar(stat="identity", position = "dodge2")+theme_bw()+ggtitle("Distribution of Markers in Country X and Y") +
+      xlab("Marker Number") + ylab("Positive Screen") + scale_x_continuous(name="Marker Number", breaks = 1:10))
+  
+  # Percentage of Screens that were Infected
+  npositives <- as.integer(nrow(alldata[alldata$positives==1,]))
+  percentinfected <- as.integer(npositives %/% nrow(alldata) %*% 100)
+  print(npositives, percentinfected)
+  
+  
+  ### AGE ###
+  
+  # Density Plot of Age Distribution (0-100 ONLY)
+  agedistribution <- ggplot(data=alldata,aes(x=age))+
+    geom_density()+
+    scale_x_continuous(limits = c(0,100))+
+    theme_bw()+ggtitle("Distribution of Age in Countries X and Y") +
+    xlab("Age") + ylab("Density")
+  
+  
+  ### GENDER ###
+  # Number of females and males
+  nfemales <- nrow(alldata[alldata$gender=="female",])
+  nmales <- nrow(alldata[alldata$gender=="male",])
+  
+  
+  print(markersbycountryXY)
+  print(agedistribution)
+  return(c("Total Screens Run:", screensrun, "Percentage Infected:", percentinfected, "Number of Female Patients:",
+           nfemales, "Number of Male Patients:", nmales))
+}
+
+
+
+### BELOW IS WORKSPACE ###
 
 #NEED dayofYear column
 
 
 #Goal 2: summarize individual country data
-  #To determine if patient is positive: sum markers 1-10
-    #if sum >=1; patient is infected
   #Determine earliest date in which individuals are infected in each country
-
   #Determine which country has a case earlier than the other (can determine from compiled file)
 
 
@@ -152,22 +249,6 @@ write.csv(alldata, "/Users/chris_turlo/Desktop/Rproject/Rproject2022/ALLDATA.csv
 #write function to summarize compiled data; #screens run, %patients infected, male v. female stats, age distribution)
 #sum(x$age%in%(10:20)) >> i assume this goes somewhere down the line in analysis
 
-#to work with all data:
-provided_alldata<-read.csv("/Users/chris_turlo/Desktop/RProject/RProject2022/allData.csv", header=TRUE, sep=',')
-  
-
-##From rubric: (6 points)
-#Compiles the files - idea cleaner, need dayofYear column, but otherwise done
-#Generate a summary graph - JV working on
-
-
-#files requested:
-  #supportingFunctions.R > contain the assorted scripts to process data
-    #compile data, including country and dayofYear columns
-    
 ##Port into files from JV's Code
-        #Number of screens run
         #Percent of patients screened that were infected
-        #Male v. Female
-        #Age Distribution
 
